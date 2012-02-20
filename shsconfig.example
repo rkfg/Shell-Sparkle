@@ -1,0 +1,3 @@
+SOURCE="$HOME/shsbox" # absolute path to the local repo
+DEST=shsbox # relative to the USB drive root
+SERIAL=B1234234534534534 # better get this from dmesg
