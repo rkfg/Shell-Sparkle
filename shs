@@ -5,6 +5,17 @@ cd "`dirname "$0"`"
 . ./shsconfig
 
 case "$1" in
+    "i") mkdir -p "$HOME/.config/Thunar"
+         COMMANDS="<action><icon>emblem-synchronizing</icon><name>SHS Sync</name><command>/home/eurekafag/bin/shs s</command><description>Sync the folder</description><patterns>*</patterns><directories/><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>mail-send-receive</icon><name>SHS Exchange</name><command>/home/eurekafag/bin/shs e</command><description>Force exchanging with the external repo</description><patterns>*</patterns><directories/><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>time</icon><name>SHS Restore revision</name><command>/home/eurekafag/bin/shs r %f</command><description>Restore an older revision of the file</description><patterns>*</patterns><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>appointment</icon><name>SHS Restore file</name><command>/home/eurekafag/bin/shs h</command><description>Restore the file by revision</description><patterns>*</patterns><directories/><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>stock_new-dir</icon><name>SHS Create box</name><command>/home/eurekafag/bin/shs c %d</command><description>Create repository here</description><patterns>*</patterns><directories/></action>"
+         if [ -f "$HOME/.config/Thunar/uca.xml" ]
+         then
+             cp "$HOME/.config/Thunar/uca.xml" "$HOME/.config/Thunar/uca.xml.bak"
+             sed "s,\(<action><icon>[^<]*</icon><name>SHS [^<]*</name><command>[^<]*</command><description>[^<]*</description>\(<patterns>\*</patterns>\)*\(<directories/>\)*\(<audio-files/>\)*\(<image-files/>\)*\(<other-files/>\)*\(<text-files/>\)*\(<video-files/>\)*</action>\),,g" "$HOME/.config/Thunar/uca.xml" | sed "s,\(.*\)</actions>,\1$COMMANDS</actions>," > "$HOME/.config/Thunar/uca.xml.new"
+             mv "$HOME/.config/Thunar/uca.xml.new" "$HOME/.config/Thunar/uca.xml"
+         else
+             echo "<?xml encoding="UTF-8" version="1.0"?>\n<actions>$COMMANDS</actions>" > "$HOME/.config/Thunar/uca.xml"
+         fi
+         ;;
     "c") cd "$CURDIR"
          git init "$2"
          cd "$2"
