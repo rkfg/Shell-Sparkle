@@ -5,24 +5,54 @@ cd "`dirname "$0"`"
 . ./shsconfig
 
 case "$1" in
-    "i") mkdir -p "$HOME/.config/Thunar"
-         COMMANDS="<action><icon>emblem-synchronizing</icon><name>SHS Sync</name><command>/home/eurekafag/bin/shs s</command><description>Sync the folder</description><patterns>*</patterns><directories/><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>mail-send-receive</icon><name>SHS Exchange</name><command>/home/eurekafag/bin/shs e</command><description>Force exchanging with the external repo</description><patterns>*</patterns><directories/><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>time</icon><name>SHS Restore revision</name><command>/home/eurekafag/bin/shs r %f</command><description>Restore an older revision of the file</description><patterns>*</patterns><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>appointment</icon><name>SHS Restore file</name><command>/home/eurekafag/bin/shs h</command><description>Restore the file by revision</description><patterns>*</patterns><directories/><audio-files/><image-files/><other-files/><text-files/><video-files/></action><action><icon>stock_new-dir</icon><name>SHS Create box</name><command>/home/eurekafag/bin/shs c %d</command><description>Create repository here</description><patterns>*</patterns><directories/></action>"
-         if [ -f "$HOME/.config/Thunar/uca.xml" ]
-         then
-             cp "$HOME/.config/Thunar/uca.xml" "$HOME/.config/Thunar/uca.xml.bak"
-             sed "s,\(<action><icon>[^<]*</icon><name>SHS [^<]*</name><command>[^<]*</command><description>[^<]*</description>\(<patterns>\*</patterns>\)*\(<directories/>\)*\(<audio-files/>\)*\(<image-files/>\)*\(<other-files/>\)*\(<text-files/>\)*\(<video-files/>\)*</action>\),,g" "$HOME/.config/Thunar/uca.xml" | sed "s,\(.*\)</actions>,\1$COMMANDS</actions>," > "$HOME/.config/Thunar/uca.xml.new"
-             mv "$HOME/.config/Thunar/uca.xml.new" "$HOME/.config/Thunar/uca.xml"
-         else
-             echo "<?xml encoding="UTF-8" version="1.0"?>\n<actions>$COMMANDS</actions>" > "$HOME/.config/Thunar/uca.xml"
-         fi
+    "i") SHSPATH=`pwd`/`basename $0`
+         case "$2" in
+         "t") mkdir -p "$HOME/.config/Thunar"
+              COMMANDS=`sed "s,@shsexec@,$SHSPATH,g" thunar.tpl`
+              if [ -f "$HOME/.config/Thunar/uca.xml" ]
+              then
+                cp "$HOME/.config/Thunar/uca.xml" "$HOME/.config/Thunar/uca.xml.bak"
+                sed "s,\(<action><icon>[^<]*</icon><name>SHS [^<]*</name><command>[^<]*</command><description>[^<]*</description>\(<patterns>\*</patterns>\)*\(<directories/>\)*\(<audio-files/>\)*\(<image-files/>\)*\(<other-files/>\)*\(<text-files/>\)*\(<video-files/>\)*</action>\),,g" "$HOME/.config/Thunar/uca.xml" | sed "s,\(.*\)</actions>,\1$COMMANDS</actions>," > "$HOME/.config/Thunar/uca.xml.new"
+                mv "$HOME/.config/Thunar/uca.xml.new" "$HOME/.config/Thunar/uca.xml"
+              else
+                echo "<?xml encoding="UTF-8" version="1.0"?>\n<actions>$COMMANDS</actions>" > "$HOME/.config/Thunar/uca.xml"
+              fi
+              ;;
+         "n") if [ -z "`which nautilus-actions-config-tool`" ]
+              then
+                echo "ERROR: nautilus-actions isn't installed."
+                exit 1
+              fi
+              TMP=`mktemp`
+              COMIDS="244e1258-d9f0-48b5-be40-3c752a7b5ed3 323d26f2-aa2a-469b-a38b-805557d2c17c 63bbf7f3-d50f-4532-9a49-e699a7a8bd23 91f0e32e-855a-43ed-a74a-bc54ac5d2e8d 94bbe111-7ab6-4fd2-b864-4ff823a04368"
+              gconftool-2 --spawn
+              for i in $COMIDS
+              do
+                gconftool-2 --recursive-unset /apps/nautilus-actions/configurations/$i
+              done
+              killall gconfd-2
+              sleep 2
+              sed "s,@shsexec@,$SHSPATH,g" nautilus.tpl | sed "s,@shsbox@,$SOURCE,g" > $TMP
+              gconftool-2 --spawn
+              gconftool-2 --load $TMP
+              rm $TMP
+              killall gconfd-2
+             ;;
+         esac
          ;;
     "c") cd "$CURDIR"
          git init "$2"
          cd "$2"
          git config receive.denyCurrentBranch ignore
          git config core.quotepath false
+         zenity --info --text="SHS exchange box was successfully created in $2"
          ;;
-    "e") DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "$SERIAL" | grep "part1")
+    "e") if [ -n "$SERIAL" ]
+         then
+            DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "$SERIAL" | grep "part1")
+         else
+            DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "part1")
+         fi
          DEV=$(readlink -e "/dev/disk/by-id/$DEVID")
          MOUNTPOINT=$(grep "$DEV" /etc/mtab | cut -f2 -d " ")
          if [ -n "$MOUNTPOINT" ]
@@ -60,7 +90,8 @@ case "$1" in
             cd "$MOUNTPOINT/$DEST"
             git reset --hard
          else
-            echo "Flash isn't mounted."
+            echo "ERROR: Flash isn't mounted."
+            zenity --error --text="Flash isn't mounted."
          fi
          ;;
     "s") cd "$SOURCE"

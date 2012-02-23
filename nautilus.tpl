@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gconfentryfile>
+  <entrylist base="/apps/nautilus-actions/configurations/244e1258-d9f0-48b5-be40-3c752a7b5ed3">
+    <entry>
+      <key>type</key>
+      <value>
+        <string>Action</string>
+      </value>
+    </entry>
+    <entry>
+      <key>items</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>profile-zero</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>label</key>
+      <value>
+        <string>SHS Create box</string>
+      </value>
+    </entry>
+    <entry>
+      <key>tooltip</key>
+      <value>
+        <string>Create repository here</string>
+      </value>
+    </entry>
+    <entry>
+      <key>icon</key>
+      <value>
+        <string>stock_new-dir</string>
+      </value>
+    </entry>
+    <entry>
+      <key>target-location</key>
+      <value>
+        <bool>true</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>toolbar-label</key>
+      <value>
+        <string>SHS Create box</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/desc-name</key>
+      <value>
+        <string>Default profile</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/path</key>
+      <value>
+        <string>@shsexec@</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/parameters</key>
+      <value>
+        <string>c '%f'</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/isfile</key>
+      <value>
+        <bool>false</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/isdir</key>
+      <value>
+        <bool>true</bool>
+      </value>
+    </entry>
+  </entrylist>
+  <entrylist base="/apps/nautilus-actions/configurations/323d26f2-aa2a-469b-a38b-805557d2c17c">
+    <entry>
+      <key>type</key>
+      <value>
+        <string>Action</string>
+      </value>
+    </entry>
+    <entry>
+      <key>items</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>profile-zero</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>label</key>
+      <value>
+        <string>SHS Sync</string>
+      </value>
+    </entry>
+    <entry>
+      <key>tooltip</key>
+      <value>
+        <string>Sync the folder</string>
+      </value>
+    </entry>
+    <entry>
+      <key>icon</key>
+      <value>
+        <string>emblem-synchronizing</string>
+      </value>
+    </entry>
+    <entry>
+      <key>target-selection</key>
+      <value>
+        <bool>false</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>target-location</key>
+      <value>
+        <bool>true</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>toolbar-label</key>
+      <value>
+        <string>SHS Sync</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/desc-name</key>
+      <value>
+        <string>Default profile</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/path</key>
+      <value>
+        <string>@shsexec@</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/parameters</key>
+      <value>
+        <string>s</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/folders</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>@shsbox@</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+  </entrylist>
+  <entrylist base="/apps/nautilus-actions/configurations/63bbf7f3-d50f-4532-9a49-e699a7a8bd23">
+    <entry>
+      <key>type</key>
+      <value>
+        <string>Action</string>
+      </value>
+    </entry>
+    <entry>
+      <key>items</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>profile-zero</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>label</key>
+      <value>
+        <string>SHS Restore revision</string>
+      </value>
+    </entry>
+    <entry>
+      <key>tooltip</key>
+      <value>
+        <string>Restore an older revision of the file</string>
+      </value>
+    </entry>
+    <entry>
+      <key>icon</key>
+      <value>
+        <string>time</string>
+      </value>
+    </entry>
+    <entry>
+      <key>toolbar-label</key>
+      <value>
+        <string>SHS Restore revision</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/desc-name</key>
+      <value>
+        <string>Default profile</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/path</key>
+      <value>
+        <string>@shsexec@</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/parameters</key>
+      <value>
+        <string>r '%f'</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/folders</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>@shsbox@</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+  </entrylist>
+  <entrylist base="/apps/nautilus-actions/configurations/91f0e32e-855a-43ed-a74a-bc54ac5d2e8d">
+    <entry>
+      <key>type</key>
+      <value>
+        <string>Action</string>
+      </value>
+    </entry>
+    <entry>
+      <key>items</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>profile-zero</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>label</key>
+      <value>
+        <string>SHS Restore file</string>
+      </value>
+    </entry>
+    <entry>
+      <key>tooltip</key>
+      <value>
+        <string>Restore the file by revision</string>
+      </value>
+    </entry>
+    <entry>
+      <key>icon</key>
+      <value>
+        <string>appointment</string>
+      </value>
+    </entry>
+    <entry>
+      <key>target-selection</key>
+      <value>
+        <bool>false</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>target-location</key>
+      <value>
+        <bool>true</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>toolbar-label</key>
+      <value>
+        <string>SHS Restore file</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/desc-name</key>
+      <value>
+        <string>Default profile</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/path</key>
+      <value>
+        <string>@shsexec@</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/parameters</key>
+      <value>
+        <string>h</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/folders</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>@shsbox@</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+  </entrylist>
+  <entrylist base="/apps/nautilus-actions/configurations/94bbe111-7ab6-4fd2-b864-4ff823a04368">
+    <entry>
+      <key>type</key>
+      <value>
+        <string>Action</string>
+      </value>
+    </entry>
+    <entry>
+      <key>items</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>profile-zero</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>label</key>
+      <value>
+        <string>SHS Exchange</string>
+      </value>
+    </entry>
+    <entry>
+      <key>tooltip</key>
+      <value>
+        <string>Force exchanging with the external repo</string>
+      </value>
+    </entry>
+    <entry>
+      <key>icon</key>
+      <value>
+        <string>mail-send-receive</string>
+      </value>
+    </entry>
+    <entry>
+      <key>target-selection</key>
+      <value>
+        <bool>false</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>target-location</key>
+      <value>
+        <bool>true</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>toolbar-label</key>
+      <value>
+        <string>SHS Exchange</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/desc-name</key>
+      <value>
+        <string>Default profile</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/path</key>
+      <value>
+        <string>@shsexec@</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/parameters</key>
+      <value>
+        <string>e</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/folders</key>
+      <value>
+        <list type="string">
+          <value>
+            <string>@shsbox@</string>
+          </value>
+        </list>
+      </value>
+    </entry>
+  </entrylist>
+</gconfentryfile>
