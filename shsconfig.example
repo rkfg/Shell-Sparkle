@@ -1,5 +1,4 @@
 SOURCE="/home/username/shsbox" # absolute path to the local repo
-UID=username # your username
 DEST=shsbox # relative to the USB drive root
 #DEST=ssh://user@example.com/home/user/shsbox # any standart git remote spec
 #NET=1 # Don't forget to uncomment this when using remote repo instead of USB drive

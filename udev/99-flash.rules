@@ -1,6 +1,7 @@
 IMPORT{file}="/home/eurekafag/bin/shsconfig" # set path to the config here
 ENV{NET}=="1", GOTO="exit_shs"
 IMPORT{file}="/tmp/shs_serial"
+ENV{UID}="eurekafag" # set your username here
 ACTION=="add", ATTR{serial}!="", ENV{DEVSERIAL}="$attr{serial}", RUN+="/bin/sh -c 'echo DEVSERIAL=$DEVSERIAL > /tmp/shs_serial'"
 ACTION=="add", RUN+="/bin/sh -c 'echo $DEVTYPE / $DEVSERIAL / $SERIAL >> /tmp/log'"
 ACTION=="add", ENV{DEVTYPE}=="partition", PROGRAM="/bin/sh -c '[ $env{DEVSERIAL} = $env{SERIAL} ]'", RUN+="/bin/sh -c '/usr/bin/sudo -u $UID /usr/bin/pmount $DEVNAME; /usr/bin/sudo -u $UID /home/eurekafag/bin/shs e'" # set path to the shs executable here
