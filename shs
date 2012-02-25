@@ -5,6 +5,22 @@ cd "`dirname "$0"`"
 . ./shsconfig
 
 case "$1" in
+    "m") case "$2" in
+            "w") pmount "$3"
+                 ;;
+            "g") TIME=60
+                 [ -n "$4" ] && TIME=$4
+                 while [ $TIME -gt 0 ]
+                 do
+                    [ -n "`grep $3 /etc/mtab`" ] && break
+                    sleep 1
+                    TIME=$(( TIME-1 ))
+                 done
+                 [ $TIME -eq 0 ] && exit 1
+                 ;;
+         esac
+         "$0" e
+         ;;
     "i") SHSPATH=`pwd`/`basename $0`
          case "$2" in
          "t") mkdir -p "$HOME/.config/Thunar"

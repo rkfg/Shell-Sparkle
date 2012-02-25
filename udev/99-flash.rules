@@ -4,5 +4,7 @@ IMPORT{file}="/tmp/shs_serial"
 ENV{UID}="eurekafag" # set your username here
 ACTION=="add", ATTR{serial}!="", ENV{DEVSERIAL}="$attr{serial}", RUN+="/bin/sh -c 'echo DEVSERIAL=$DEVSERIAL > /tmp/shs_serial'"
 ACTION=="add", RUN+="/bin/sh -c 'echo $DEVTYPE / $DEVSERIAL / $SERIAL >> /tmp/log'"
-ACTION=="add", ENV{DEVTYPE}=="partition", PROGRAM="/bin/sh -c '[ $env{DEVSERIAL} = $env{SERIAL} ]'", RUN+="/bin/sh -c '/usr/bin/sudo -u $UID /usr/bin/pmount $DEVNAME; /usr/bin/sudo -u $UID /home/eurekafag/bin/shs e'" # set path to the shs executable here
+ACTION=="add", ENV{DEVTYPE}=="partition", PROGRAM="/bin/sh -c '[ $env{DEVSERIAL} = $env{SERIAL} ]'", RUN+="/bin/sh -c '/usr/bin/sudo -u $UID /home/eurekafag/bin/shs m w $DEVNAME'" # set path to the shs executable here
+# second parameter sets pmount mounting ('w' for Window Managers which doesn't do it by themselves) or DE-mounting ('g' for GUI/GNOME).
+# For DE-mounting you can also specify the timeout of waiting for mount (in seconds) as the 4th parameter, default is 60.
 LABEL="exit_shs"
