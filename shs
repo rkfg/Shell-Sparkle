@@ -67,7 +67,7 @@ case "$1" in
              fi
              FULLDEST=$MOUNTPOINT/$DEST
          fi
-         zenity --progress --pulsate --text="Exchanging data..." --no-cancel &
+         zenity --progress --pulsate --text="Exchanging data..." &
          ZENPID=$!
          cd "$SOURCE"
          git add *
@@ -125,7 +125,9 @@ case "$1" in
             EXT=.$EXT
          fi
          FILENAME=${FULLFILE%.*}
-         git show $REV:"$RELPATH" > "`dirname "$RELPATH"`/${FILENAME} ($DATE)$EXT"
+         # ugliest hack ever: using tee instead of stdout redirection because of dash v5.5
+         # unicode filenames garbling. Ubuntu 10.04 is still using this.
+         git show $REV:"$RELPATH" | tee "`dirname "$RELPATH"`/${FILENAME} ($DATE)$EXT"
          ;;
     "h") cd "$SOURCE"
          while true
@@ -162,7 +164,7 @@ case "$1" in
                                     fi
                                     FILENAME=${FULLFILE%.*}
                                     [ -n "$CURPATH" ] && mkdir -p "$CURPATH"
-                                    git show $REV:"$FILE" > "$CURPATH$FILENAME ($DATE)$EXT"
+                                    git show $REV:"$FILE" | tee "$CURPATH$FILENAME ($DATE)$EXT"
                                     ;;
                         esac
                         FILES=`echo $FILES| cut -f3- -d "|"`
