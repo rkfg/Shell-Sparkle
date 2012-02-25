@@ -32,7 +32,7 @@
     <entry>
       <key>icon</key>
       <value>
-        <string>stock_new-dir</string>
+        <string>gtk-new</string>
       </value>
     </entry>
     <entry>
@@ -110,7 +110,7 @@
     <entry>
       <key>icon</key>
       <value>
-        <string>emblem-synchronizing</string>
+        <string>gtk-yes</string>
       </value>
     </entry>
     <entry>
@@ -192,7 +192,7 @@
     <entry>
       <key>icon</key>
       <value>
-        <string>time</string>
+        <string>gtk-save-as</string>
       </value>
     </entry>
     <entry>
@@ -262,7 +262,7 @@
     <entry>
       <key>icon</key>
       <value>
-        <string>appointment</string>
+        <string>gtk-save</string>
       </value>
     </entry>
     <entry>
@@ -344,7 +344,7 @@
     <entry>
       <key>icon</key>
       <value>
-        <string>mail-send-receive</string>
+        <string>gtk-refresh</string>
       </value>
     </entry>
     <entry>
@@ -394,4 +394,35 @@
       </value>
     </entry>
   </entrylist>
+  <entrylist base="/apps/nautilus-actions/preferences">
+    <entry>
+      <key>iprefs-alphabetical-order</key>
+      <value>
+        <string>ManualOrder</string>
+      </value>
+    </entry>
+    <entry>
+      <key>iprefs-level-zero</key>
+      <value>
+        <list type="string">
+            <value>
+              <string>94bbe111-7ab6-4fd2-b864-4ff823a04368</string>
+            </value>
+            <value>
+              <string>323d26f2-aa2a-469b-a38b-805557d2c17c</string>
+            </value>
+            <value>
+              <string>91f0e32e-855a-43ed-a74a-bc54ac5d2e8d</string>
+            </value>
+            <value>
+              <string>63bbf7f3-d50f-4532-9a49-e699a7a8bd23</string>
+            </value>
+            <value>
+              <string>244e1258-d9f0-48b5-be40-3c752a7b5ed3</string>
+            </value>
+        </list>
+      </value>
+    </entry>
+  </entrylist>
 </gconfentryfile>
+
