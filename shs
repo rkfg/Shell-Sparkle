@@ -47,63 +47,72 @@ case "$1" in
          git config core.quotepath false
          zenity --info --text="SHS exchange box was successfully created in $2"
          ;;
-    "e") if [ -n "$SERIAL" ]
+    "e") if [ "$NET" = "1" ]
          then
-            DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "$SERIAL" | grep "part1")
+             FULLDEST=$DEST
          else
-            DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "part1")
+             if [ -n "$SERIAL" ]
+             then
+                DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "$SERIAL" | grep "part1")
+             else
+                DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "part1")
+             fi
+             DEV=$(readlink -e "/dev/disk/by-id/$DEVID")
+             MOUNTPOINT=$(grep "$DEV" /etc/mtab | cut -f2 -d " ")
+             if [ -z "$MOUNTPOINT" ]
+             then
+                echo "ERROR: Flash isn't mounted."
+                zenity --error --text="Flash isn't mounted."
+                exit 1
+             fi
+             FULLDEST=$MOUNTPOINT/$DEST
          fi
-         DEV=$(readlink -e "/dev/disk/by-id/$DEVID")
-         MOUNTPOINT=$(grep "$DEV" /etc/mtab | cut -f2 -d " ")
-         if [ -n "$MOUNTPOINT" ]
+         zenity --progress --pulsate --text="Exchanging data..." --no-cancel &
+         ZENPID=$!
+         cd "$SOURCE"
+         git add *
+         git commit -a -m "`date`"
+         git fetch "$FULLDEST"
+         ERRORS=`git merge -m "Merge on \`date\`" FETCH_HEAD 2>&1 | grep "^CONFLICT"`
+         if [ -n "$ERRORS" ]
          then
-            cd "$SOURCE"
-            git add *
-            git commit -a -m "`date`"
-            git fetch "$MOUNTPOINT/$DEST"
-            ERRORS=`git merge -m "Merge on \`date\`" FETCH_HEAD 2>&1 | grep "^CONFLICT"`
-            if [ -n "$ERRORS" ]
-            then
-                ORIGIFS=$IFS
-                IFS='
+             ORIGIFS=$IFS
+             IFS='
 '
-                for l in $ERRORS
-                do
-                    FILE=`echo $l | sed 's/CONFLICT (content): Merge conflict in \(.*\)$/\1/'`
-                    git checkout ORIG_HEAD "$FILE"
-                    FULLFILE=`basename "$FILE"`
-                    EXT=${FULLFILE##*.}
-                    if [ "$EXT" = "$FULLFILE" ]
-                    then
-                        EXT=
-                    else
-                        EXT=.$EXT
-                    fi
-                    FILENAME=${FULLFILE%.*}
-                    git show FETCH_HEAD:"$FILE" > "`dirname "$FILE"`/${FILENAME}.remote$EXT"
-                done
-                IFS=$ORIGIFS
-                git add *
-                git commit -a -m "`date`"
-            fi
-            git push "$MOUNTPOINT/$DEST" master:master
-            cd "$MOUNTPOINT/$DEST"
-            git reset --hard
-         else
-            echo "ERROR: Flash isn't mounted."
-            zenity --error --text="Flash isn't mounted."
+             for l in $ERRORS
+             do
+                 FILE=`echo $l | sed 's/CONFLICT (content): Merge conflict in \(.*\)$/\1/'`
+                 git checkout ORIG_HEAD "$FILE"
+                 FULLFILE=`basename "$FILE"`
+                 EXT=${FULLFILE##*.}
+                 if [ "$EXT" = "$FULLFILE" ]
+                 then
+                     EXT=
+                 else
+                     EXT=.$EXT
+                 fi
+                 FILENAME=${FULLFILE%.*}
+                 git show FETCH_HEAD:"$FILE" > "`dirname "$FILE"`/${FILENAME}.remote$EXT"
+             done
+             IFS=$ORIGIFS
+             git add *
+             git commit -a -m "`date`"
          fi
-         ;;
+         git push "$FULLDEST" master:master
+         if [ ! "$NET" = "1" ]
+         then
+            cd "$FULLDEST"
+            git reset --hard
+         fi
+         kill $ZENPID
+     ;;
     "s") cd "$SOURCE"
          git add *
          git commit -a -m "`date`"
          ;;
     "r") cd "$SOURCE"
          SELECTED=`git log --oneline "$2" | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Найденные ревизии" --text "Ревизии для файла $2" --column "Коммит" --column "Дата" --print-column=ALL`
-         if [ -z "$SELECTED" ]
-         then
-            exit
-         fi
+         [ -z "$SELECTED" ] && exit
          REV=`echo $SELECTED | cut -f1 -d "|"`
          DATE=`echo $SELECTED | cut -f2 -d "|"`
          RELPATH=${2##${SOURCE}/}
@@ -122,46 +131,44 @@ case "$1" in
          while true
          do
             SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
-            if [ -z "$SELECTED" ]
-            then
-                exit
-            fi
+            [ -z "$SELECTED" ] && exit
             REV=`echo $SELECTED | cut -f1 -d "|"`
             DATE=`echo $SELECTED | cut -f2 -d "|"`
             CURPATH=
             while true
             do
-                FILES=`git ls-tree $REV "$CURPATH" | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1\n\2/' | zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480`
+                FILES=`git ls-tree $REV "$CURPATH" | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1\n\2/' | zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480 --multiple`
                 if [ -z "$FILES" ]
                 then
-                    if [ -z "$CURPATH" ]
-                    then
-                        break
-                    fi
+                    [ -z "$CURPATH" ] && break
                     CURPATH=`dirname "${CURPATH%/}"`/
-                    if [ "$CURPATH" = "./" ]
-                    then
-                        CURPATH=
-                    fi
+                    [ "$CURPATH" = "./" ] && CURPATH=
+                else
+                    while [ -n "$FILES" ]
+                    do
+                        TYPE=`echo $FILES | cut -f1 -d "|"`
+                        FILE=`echo $FILES | cut -f2 -d "|"`
+                        case "$TYPE" in
+                            "tree") CURPATH=$FILE/
+                                    break
+                                    ;;
+                            "blob") FULLFILE=`basename "$FILE"`
+                                    EXT=${FULLFILE##*.}
+                                    if [ "$EXT" = "$FULLFILE" ]
+                                    then
+                                        EXT=
+                                    else
+                                        EXT=.$EXT
+                                    fi
+                                    FILENAME=${FULLFILE%.*}
+                                    [ -n "$CURPATH" ] && mkdir -p "$CURPATH"
+                                    git show $REV:"$FILE" > "$CURPATH$FILENAME ($DATE)$EXT"
+                                    ;;
+                        esac
+                        FILES=`echo $FILES| cut -f3- -d "|"`
+                    done
+                    [ -z "$FILES" ] && exit
                 fi
-                TYPE=`echo $FILES | cut -f1 -d "|"`
-                FILE=`echo $FILES | cut -f2 -d "|"`
-                case "$TYPE" in
-                    "tree") CURPATH=$FILE/
-                            ;;
-                    "blob") FULLFILE=`basename "$FILE"`
-                            EXT=${FULLFILE##*.}
-                            if [ "$EXT" = "$FULLFILE" ]
-                            then
-                                EXT=
-                            else
-                                EXT=.$EXT
-                            fi
-                            FILENAME=${FULLFILE%.*}
-                            git show $REV:"$FILE" > "$CURPATH$FILENAME ($DATE)$EXT"
-                            exit
-                            ;;
-                esac
             done
          done
          ;;
