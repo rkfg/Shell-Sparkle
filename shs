@@ -4,6 +4,12 @@ CURDIR=`pwd`
 cd "`dirname "$0"`"
 . ./shsconfig
 
+if [ -z `which git` -o -z `which zenity` ]
+then
+    echo 'git or zenity is not installed!'
+    zenity --error --text='git or zenity is not installed!'
+    exit
+fi
 case "$1" in
     "m") case "$2" in
             "w") pmount "$3"
@@ -24,6 +30,12 @@ case "$1" in
     "i") SHSPATH=`pwd`/`basename $0`
          case "$2" in
          "t") mkdir -p "$HOME/.config/Thunar"
+              if [ ! -f thunar.tpl ]
+              then
+                echo 'thunar.tpl not found.'
+                zenity --error --text='thunar.tpl not found.'
+                exit
+              fi
               COMMANDS=`sed "s,@shsexec@,$SHSPATH,g" thunar.tpl`
               if [ -f "$HOME/.config/Thunar/uca.xml" ]
               then
@@ -38,6 +50,12 @@ case "$1" in
               then
                 echo "ERROR: nautilus-actions isn't installed."
                 exit 1
+              fi
+              if [ ! -f nautilus.tpl ]
+              then
+                echo 'nautilus.tpl not found.'
+                zenity --error --text='nautilus.tpl not found.'
+                exit
               fi
               TMP=`mktemp`
               COMIDS="244e1258-d9f0-48b5-be40-3c752a7b5ed3 323d26f2-aa2a-469b-a38b-805557d2c17c 63bbf7f3-d50f-4532-9a49-e699a7a8bd23 91f0e32e-855a-43ed-a74a-bc54ac5d2e8d 94bbe111-7ab6-4fd2-b864-4ff823a04368"
