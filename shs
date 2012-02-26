@@ -1,8 +1,33 @@
 #!/bin/sh
 
+getdest () {
+    if [ "$NET" = "1" ]
+         then
+             FULLDEST=$DEST
+         else
+             if [ -n "$SERIAL" ]
+             then
+                DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "$SERIAL" | grep "part1")
+             else
+                DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "part1")
+             fi
+             DEV=$(readlink -e "/dev/disk/by-id/$DEVID")
+             MOUNTPOINT=$(grep "$DEV" /etc/mtab | cut -f2 -d " ")
+             if [ -z "$MOUNTPOINT" ]
+             then
+                echo "ERROR: Flash isn't mounted."
+                zenity --error --text="Flash isn't mounted."
+                exit 1
+             fi
+             FULLDEST=$MOUNTPOINT/$DEST
+    fi
+    echo $FULLDEST
+}
+
 CURDIR=`pwd`
 cd "`dirname "$0"`"
 . ./shsconfig
+SHSPATH=`pwd`/`basename $0`
 
 if [ $# -eq 0 ]
 then
@@ -48,10 +73,9 @@ case "$1" in
                  [ $TIME -eq 0 ] && exit 1
                  ;;
          esac
-         "$0" e
+         "$SHSPATH" e
          ;;
-    "i") SHSPATH=`pwd`/`basename $0`
-         case "$2" in
+    "i") case "$2" in
          "t") mkdir -p "$HOME/.config/Thunar"
               if [ ! -f thunar.tpl ]
               then
@@ -104,32 +128,34 @@ case "$1" in
          git config core.quotepath false
          zenity --info --text="SHS exchange box was successfully created in $2"
          ;;
-    "e") if [ "$NET" = "1" ]
-         then
-             FULLDEST=$DEST
-         else
-             if [ -n "$SERIAL" ]
-             then
-                DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "$SERIAL" | grep "part1")
-             else
-                DEVID=$(ls -1 /dev/disk/by-id | grep "^usb-" | grep "part1")
-             fi
-             DEV=$(readlink -e "/dev/disk/by-id/$DEVID")
-             MOUNTPOINT=$(grep "$DEV" /etc/mtab | cut -f2 -d " ")
-             if [ -z "$MOUNTPOINT" ]
-             then
-                echo "ERROR: Flash isn't mounted."
-                zenity --error --text="Flash isn't mounted."
-                exit 1
-             fi
-             FULLDEST=$MOUNTPOINT/$DEST
-         fi
+    "e") FULLDEST=`getdest`
          zenity --progress --pulsate --text="Exchanging data..." &
          ZENPID=$!
          cd "$SOURCE"
          git add *
-         git commit -a -m "`date`"
-         git fetch "$FULLDEST"
+         if [ "$NET" != "1" ]
+         then
+             REMOTECOMMIT=`cd "$FULLDEST"; git log --reverse --pretty=oneline | head -n1`
+         else
+             ADDR=`echo $DEST | sed "s,ssh://\([^/]*\)/.*,\1,"`
+             DPATH=`echo $DEST | sed "s,ssh://[^/]*\(/.*\),\1,"`
+             REMOTECOMMIT=`ssh $ADDR "cd $DPATH; git log --reverse --pretty=oneline | head -n1"`
+         fi
+         REMOTEMSG=`echo $REMOTECOMMIT | cut -f2- -d ' '`
+         REMOTEROOT=`echo $REMOTECOMMIT | cut -f1 -d ' '`
+         LOCALROOT=`cd "$SOURCE"; git log --reverse --pretty=oneline | head -n1 | cut -f1 -d ' '`
+         echo "LOCALROOT: $LOCALROOT REMOTEROOT: $REMOTEROOT"
+         if [ "$LOCALROOT" != "$REMOTEROOT" ] # pruning happened
+         then
+            git checkout --orphan temp
+            git fetch "$FULLDEST"
+            git branch -D master
+            git branch -m master
+            git commit -a -m "`date`"
+         else
+             git commit -a -m "`date`"
+             git fetch "$FULLDEST"
+         fi
          ERRORS=`git merge -m "Merge on \`date\`" FETCH_HEAD 2>&1 | grep "^CONFLICT"`
          if [ -n "$ERRORS" ]
          then
@@ -231,5 +257,34 @@ case "$1" in
             done
          done
          ;;
+         p) cd "$SOURCE"
+            if [ $# -eq 1 ]
+            then
+               SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+                [ -z "$SELECTED" ] && exit
+                REV=`echo $SELECTED | cut -f1 -d "|"`
+            else
+                REV=$2
+            fi
+            if [ "$NET" != "1" ]
+            then
+                for P in "$SOURCE" "`getdest`"
+                do
+                    cd "$P"
+                    git filter-branch -f --parent-filter "if [ \$GIT_COMMIT = $REV ]; then echo ""; else read line; echo $line; fi"
+                    rm -rf .git/logs
+                    rm -rf .git/refs/original/
+                    git gc --prune=now
+                done
+            else
+                git filter-branch -f --parent-filter "if [ \$GIT_COMMIT = $REV ]; then echo ""; else read line; echo $line; fi"
+                rm -rf .git/logs
+                rm -rf .git/refs/original/
+                git gc --prune=now
+                ADDR=`echo $DEST | sed "s,ssh://\([^/]*\)/.*,\1,"`
+                DPATH=`echo $DEST | sed "s,ssh://[^/]*\(/.*\),\1,"`
+                ssh $ADDR "cd $DPATH; git filter-branch -f --parent-filter \"if [ \$GIT_COMMIT = $REV ]; then echo \"\"; else read line; echo \$line; fi\"; rm -rf .git/logs; rm -rf .git/refs/original/; git gc --prune=now"
+            fi
+            ;;
 esac
 
