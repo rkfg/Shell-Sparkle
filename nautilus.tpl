@@ -394,6 +394,88 @@
       </value>
     </entry>
   </entrylist>
+  <entrylist base="/apps/nautilus-actions/configurations/3e7d2f92-6358-4042-a5ac-5ba745b1aeff">
+    <entry>
+      <key>icon</key>
+      <value>
+        <string>gtk-cut</string>
+      </value>
+    </entry>
+    <entry>
+      <key>items</key>
+      <value>
+        <list type="string">
+            <value>
+              <string>profile-zero</string>
+            </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>label</key>
+      <value>
+        <string>SHS Prune</string>
+      </value>
+    </entry>
+    <entry>
+      <key>target-location</key>
+      <value>
+        <bool>true</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>target-selection</key>
+      <value>
+        <bool>false</bool>
+      </value>
+    </entry>
+    <entry>
+      <key>toolbar-label</key>
+      <value>
+        <string>SHS Prune</string>
+      </value>
+    </entry>
+    <entry>
+      <key>tooltip</key>
+      <value>
+        <string>Prune local and remote history</string>
+      </value>
+    </entry>
+    <entry>
+      <key>type</key>
+      <value>
+        <string>Action</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/desc-name</key>
+      <value>
+        <string>Default profile</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/folders</key>
+      <value>
+        <list type="string">
+            <value>
+              <string>/home/eurekafag/shsbox</string>
+            </value>
+        </list>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/parameters</key>
+      <value>
+        <string>p</string>
+      </value>
+    </entry>
+    <entry>
+      <key>profile-zero/path</key>
+      <value>
+        <string>/home/eurekafag/bin/shs</string>
+      </value>
+    </entry>
+  </entrylist>
   <entrylist base="/apps/nautilus-actions/preferences">
     <entry>
       <key>iprefs-alphabetical-order</key>
@@ -420,9 +502,11 @@
             <value>
               <string>244e1258-d9f0-48b5-be40-3c752a7b5ed3</string>
             </value>
+            <value>
+              <string>3e7d2f92-6358-4042-a5ac-5ba745b1aeff</string>
+            </value>
         </list>
       </value>
     </entry>
   </entrylist>
 </gconfentryfile>
-
