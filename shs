@@ -4,6 +4,29 @@ CURDIR=`pwd`
 cd "`dirname "$0"`"
 . ./shsconfig
 
+if [ $# -eq 0 ]
+then
+    echo "Shell Sparkle is a shell-based file synchronizing tool which supports USB
+drives and network as medium. It uses git for versioning and restoring deleted files.
+Usage:
+
+\033[1mshs m <w|g> /dev/sdX1 [timeout]\033[0m — mount specified device and perform the data
+exchange. Use pmount if the second argument is 'w' (Windows Manager) or wait for
+DE mounting ('g' is for GNOME or GUI). The timeout is 60 seconds by default.
+You probably don't need to use it directly, this is called from the udev rule.
+\033[1mshs i <t|n>\033[0m — install context menu commands for Thunar or Nautilus respectively.
+\033[1mshs c /path/to/new/box\033[0m — create a new exchange directory. It just initializes a git
+repo and sets some config parameters. You should manually set the SOURCE var in the
+config.
+\033[1mshs s\033[0m — synchronize your files with the local git repo. Use this in the crontab.
+\033[1mshs e\033[0m — synchronize your local git repo with the remote one (USB drive or network).
+Conflicts are resolved automatically and if there are big differences then remote
+conflicting files are created with the suffix '.remote' for you to review and merge
+changes.
+\033[1mshs r /path/to/file\033[0m — restore an older revision of the file.
+\033[1mshs h\033[0m — restore a file or files of an arbitrary revision."
+    exit
+fi
 if [ -z `which git` -o -z `which zenity` ]
 then
     echo 'git or zenity is not installed!'
