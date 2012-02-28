@@ -144,14 +144,16 @@ case "$1" in
          REMOTEMSG=`echo $REMOTECOMMIT | cut -f2- -d ' '`
          REMOTEROOT=`echo $REMOTECOMMIT | cut -f1 -d ' '`
          LOCALROOT=`cd "$SOURCE"; git log --reverse --pretty=oneline | head -n1 | cut -f1 -d ' '`
-         echo "LOCALROOT: $LOCALROOT REMOTEROOT: $REMOTEROOT"
-         if [ "$LOCALROOT" != "$REMOTEROOT" ] # pruning happened
+         if [ -n "$LOCALROOT" -a -n "$REMOTEROOT" -a "$LOCALROOT" != "$REMOTEROOT" ] # pruning happened
          then
             git checkout --orphan temp
             git fetch "$FULLDEST"
             git branch -D master
             git branch -m master
             git commit -a -m "`date`"
+            rm -rf .git/logs
+            rm -rf .git/refs/original/
+            git gc --prune=0
          else
              git commit -a -m "`date`"
              git fetch "$FULLDEST"
@@ -182,7 +184,7 @@ case "$1" in
              git commit -a -m "`date`"
          fi
          git push "$FULLDEST" master:master
-         if [ ! "$NET" = "1" ]
+         if [ "$NET" != "1" ]
          then
             cd "$FULLDEST"
             git reset --hard
