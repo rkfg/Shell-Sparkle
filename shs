@@ -153,6 +153,7 @@ case "$1" in
             git commit -a -m "`date`"
             rm -rf .git/logs
             rm -rf .git/refs/original/
+            sed -i 's,.*refs/original/.*,,' .git/packed-refs
             git gc --prune=0
          else
              git commit -a -m "`date`"
@@ -268,25 +269,31 @@ case "$1" in
             else
                 REV=$2
             fi
+            zenity --progress --pulsate --text="Pruning..." &
+            ZENPID=$!
             if [ "$NET" != "1" ]
             then
                 for P in "$SOURCE" "`getdest`"
                 do
                     cd "$P"
-                    git filter-branch -f --parent-filter "if [ \$GIT_COMMIT = $REV ]; then echo ""; else read line; echo $line; fi"
+                    git filter-branch -f --parent-filter "if [ \"\$GIT_COMMIT\" = \"$REV\" ]; then echo \"\"; else read line; echo $line; fi"
                     rm -rf .git/logs
                     rm -rf .git/refs/original/
+                    sed -i 's,.*refs/original/.*,,' .git/packed-refs
                     git gc --prune=now
                 done
             else
-                git filter-branch -f --parent-filter "if [ \$GIT_COMMIT = $REV ]; then echo ""; else read line; echo $line; fi"
+                git filter-branch -f --parent-filter "if [ \"\$GIT_COMMIT\" = \"$REV\" ]; then echo \"\"; else read line; echo $line; fi"
                 rm -rf .git/logs
                 rm -rf .git/refs/original/
+                sed -i 's,.*refs/original/.*,,' .git/packed-refs
                 git gc --prune=now
                 ADDR=`echo $DEST | sed "s,ssh://\([^/]*\)/.*,\1,"`
                 DPATH=`echo $DEST | sed "s,ssh://[^/]*\(/.*\),\1,"`
-                ssh $ADDR "cd $DPATH; git filter-branch -f --parent-filter \"if [ \$GIT_COMMIT = $REV ]; then echo \"\"; else read line; echo \$line; fi\"; rm -rf .git/logs; rm -rf .git/refs/original/; git gc --prune=now"
+                ssh $ADDR "cd $DPATH; git filter-branch -f --parent-filter \"if [ \\\"\$GIT_COMMIT\\\" = \\\"$REV\\\" ]; then echo \"\"; else read line; echo \$line; fi\"; rm -rf logs; rm -rf refs/original/; sed -i 's,.*refs/original/.*,,' packed-refs; git gc --prune=now"
+            
             fi
+            kill $ZENPID
             ;;
 esac
 
