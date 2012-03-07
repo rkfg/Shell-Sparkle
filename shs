@@ -24,6 +24,9 @@ getdest () {
     echo $FULLDEST
 }
 
+PIDLOCK=`cat /tmp/shslock 2>/dev/null`
+[ -n "$PIDLOCK" -a -d "/proc/$PIDLOCK" ] && exit 2
+echo $$ > /tmp/shslock
 CURDIR=`pwd`
 cd "`dirname "$0"`"
 . ./shsconfig
@@ -73,6 +76,7 @@ case "$1" in
                  [ $TIME -eq 0 ] && exit 1
                  ;;
          esac
+         rm /tmp/shslock
          "$SHSPATH" e
          ;;
     "i") case "$2" in
@@ -225,7 +229,7 @@ case "$1" in
             CURPATH=
             while true
             do
-                FILES=`git ls-tree $REV "$CURPATH" | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1\n\2/' | zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480 --multiple`
+                FILES=`git ls-tree $REV "$CURPATH" | sort | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1\n\2/' | zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480 --multiple`
                 if [ -z "$FILES" ]
                 then
                     [ -z "$CURPATH" ] && break

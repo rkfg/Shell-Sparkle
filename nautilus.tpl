@@ -62,7 +62,7 @@
     <entry>
       <key>profile-zero/parameters</key>
       <value>
-        <string>c '%f'</string>
+        <string>c '%d/%f'</string>
       </value>
     </entry>
     <entry>
@@ -458,7 +458,7 @@
       <value>
         <list type="string">
             <value>
-              <string>/home/eurekafag/shsbox</string>
+              <string>@shsbox@</string>
             </value>
         </list>
       </value>
