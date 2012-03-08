@@ -62,7 +62,7 @@
     <entry>
       <key>profile-zero/parameters</key>
       <value>
-        <string>c '%d/%f'</string>
+        <string>c %d/%f</string>
       </value>
     </entry>
     <entry>
@@ -216,7 +216,7 @@
     <entry>
       <key>profile-zero/parameters</key>
       <value>
-        <string>r '%f'</string>
+        <string>r %d/%f</string>
       </value>
     </entry>
     <entry>
