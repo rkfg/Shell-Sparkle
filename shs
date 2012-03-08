@@ -182,7 +182,7 @@ case "$1" in
                      EXT=.$EXT
                  fi
                  FILENAME=${FULLFILE%.*}
-                 git show FETCH_HEAD:"$FILE" > "`dirname "$FILE"`/${FILENAME}.remote$EXT"
+                 git show FETCH_HEAD:"$FILE" | tee "`dirname "$FILE"`/${FILENAME}.remote$EXT"
              done
              IFS=$ORIGIFS
              git add *
