@@ -472,7 +472,7 @@
     <entry>
       <key>profile-zero/path</key>
       <value>
-        <string>/home/eurekafag/bin/shs</string>
+        <string>@shsexec@</string>
       </value>
     </entry>
   </entrylist>
