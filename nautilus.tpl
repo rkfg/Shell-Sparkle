@@ -62,7 +62,7 @@
     <entry>
       <key>profile-zero/parameters</key>
       <value>
-        <string>c '%f'</string>
+        <string>c %d/%f</string>
       </value>
     </entry>
     <entry>
@@ -216,7 +216,7 @@
     <entry>
       <key>profile-zero/parameters</key>
       <value>
-        <string>r '%f'</string>
+        <string>r %d/%f</string>
       </value>
     </entry>
     <entry>
@@ -458,7 +458,7 @@
       <value>
         <list type="string">
             <value>
-              <string>/home/eurekafag/shsbox</string>
+              <string>@shsbox@</string>
             </value>
         </list>
       </value>
@@ -472,7 +472,7 @@
     <entry>
       <key>profile-zero/path</key>
       <value>
-        <string>/home/eurekafag/bin/shs</string>
+        <string>@shsexec@</string>
       </value>
     </entry>
   </entrylist>
