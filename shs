@@ -133,6 +133,7 @@ case "$1" in
          ZENPID=$!
          cd "$SOURCE"
          git add *
+         git add .*
          if [ "$NET" != "1" ]
          then
              REMOTECOMMIT=`cd "$FULLDEST"; git log --reverse --pretty=oneline | head -n1`
@@ -182,6 +183,7 @@ case "$1" in
              done
              IFS=$ORIGIFS
              git add *
+             git add .*
              git commit -a -m "`date`"
          fi
          git push "$FULLDEST" master:master
@@ -194,6 +196,7 @@ case "$1" in
      ;;
     "s") cd "$SOURCE"
          git add *
+         git add .*
          git commit -a -m "`date`"
          ;;
     "r") cd "$SOURCE"
