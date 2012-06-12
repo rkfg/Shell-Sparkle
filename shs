@@ -130,6 +130,8 @@ case "$1" in
          cd "$2"
          git config receive.denyCurrentBranch ignore
          git config core.quotepath false
+         git config user.name "$USER"
+         git config user.email "$USER@$HOST"
          zenity --info --text="SHS exchange box was successfully created in $2"
          ;;
     "e") FULLDEST=`getdest`
