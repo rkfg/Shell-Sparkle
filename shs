@@ -186,7 +186,7 @@ case "$1" in
                      EXT=.$EXT
                  fi
                  FILENAME=${FULLFILE%.*}
-                 git show FETCH_HEAD:"$FILE" | tee "`dirname "$FILE"`/${FILENAME}.remote$EXT"
+                 git show FETCH_HEAD:"$FILE" | tee "`dirname "$FILE"`/${FILENAME}.remote$EXT" > /dev/null
              done
              IFS=$ORIGIFS
              git add *
@@ -223,7 +223,7 @@ case "$1" in
          FILENAME=${FULLFILE%.*}
          # ugliest hack ever: using tee instead of stdout redirection because of dash v5.5
          # unicode filenames garbling. Ubuntu 10.04 is still using this.
-         git show $REV:"$RELPATH" | tee "`dirname "$RELPATH"`/${FILENAME} ($DATE)$EXT"
+         git show $REV:"$RELPATH" | tee "`dirname "$RELPATH"`/${FILENAME} ($DATE)$EXT" > /dev/null
          ;;
     "h") cd "$SOURCE"
          while true
@@ -260,7 +260,7 @@ case "$1" in
                                     fi
                                     FILENAME=${FULLFILE%.*}
                                     [ -n "$CURPATH" ] && mkdir -p "$CURPATH"
-                                    git show $REV:"$FILE" | tee "$CURPATH$FILENAME ($DATE)$EXT"
+                                    git show $REV:"$FILE" | tee "$CURPATH$FILENAME ($DATE)$EXT" > /dev/null
                                     ;;
                         esac
                         FILES=`echo $FILES| cut -f3- -d "|"`
