@@ -31,6 +31,7 @@ CURDIR=`pwd`
 cd "`dirname "$0"`"
 . ./shsconfig
 SHSPATH=`pwd`/`basename $0`
+XARGS="`which xargs 2>/dev/null`"
 
 if [ $# -eq 0 ]
 then
@@ -207,7 +208,12 @@ case "$1" in
          git commit -a -m "`date`"
          ;;
     "r") cd "$SOURCE"
-         SELECTED=`git log --oneline "$2" | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Найденные ревизии" --text "Ревизии для файла $2" --column "Коммит" --column "Дата" --print-column=ALL`
+         if [ -n "$XARGS" ]
+         then
+             SELECTED=`git log --oneline "$2" | sed 's/\([^ ]*\) \(.*\)/\1 "\2"/' | xargs zenity --list --title "Найденные ревизии" --text "Ревизии для файла $2" --column "Коммит" --column "Дата" --print-column=ALL`
+         else
+             SELECTED=`git log --oneline "$2" | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Найденные ревизии" --text "Ревизии для файла $2" --column "Коммит" --column "Дата" --print-column=ALL`
+         fi
          [ -z "$SELECTED" ] && exit
          REV=`echo $SELECTED | cut -f1 -d "|"`
          DATE=`echo $SELECTED | cut -f2 -d "|"`
@@ -228,14 +234,24 @@ case "$1" in
     "h") cd "$SOURCE"
          while true
          do
-            SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+            if [ -n "$XARGS" ]
+            then
+                SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1 "\2"/' | xargs zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+            else
+                SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+            fi
             [ -z "$SELECTED" ] && exit
             REV=`echo $SELECTED | cut -f1 -d "|"`
             DATE=`echo $SELECTED | cut -f2 -d "|"`
             CURPATH=
             while true
             do
-                FILES=`git ls-tree $REV "$CURPATH" | sort -k 4 | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1\n\2/' | zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480 --multiple`
+                if [ -n "$XARGS" ]
+                then
+                    FILES=`git ls-tree $REV "$CURPATH" | sort -k 4 | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1 "\2"/' | xargs zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480 --multiple`
+                else
+                    FILES=`git ls-tree $REV "$CURPATH" | sort -k 4 | sed 's/^[^ ]* \([^ ]*\) [0-9a-f]*\s*\(.*\)$/\1\n\2/' | zenity --list --title "Файлы" --text "Вы здесь: $CURPATH" --column "Тип" --column "Название" --print-column=ALL --width=640 --height=480 --multiple`
+                fi
                 if [ -z "$FILES" ]
                 then
                     [ -z "$CURPATH" ] && break
@@ -273,7 +289,12 @@ case "$1" in
          p) cd "$SOURCE"
             if [ $# -eq 1 ]
             then
-               SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+                if [ -n "$XARGS" ]
+                then
+                    SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1 "\2"/' | xargs zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+                else
+                    SELECTED=`git log --oneline | sed 's/\([^ ]*\) \(.*\)/\1\n\2/' | zenity --list --title "Ревизии" --text "Все ревизии" --column "Коммит" --column "Дата" --print-column=ALL --width=640 --height=480`
+                fi
                 [ -z "$SELECTED" ] && exit
                 REV=`echo $SELECTED | cut -f1 -d "|"`
             else
